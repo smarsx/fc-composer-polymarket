@@ -243,3 +243,25 @@ export default async function handler(
 
 // maybe can just use valueBought and profit to get percentChange ?
 // use ((valueBought + profit) - valueBought) / valueBought ??
+
+// query MyQuery {
+//   accounts(where: {id:"0x5f01e0886b508a357ac198cbe72af3bf74fe9d3d"}) {
+//     marketProfits {
+//       profit
+//       condition {
+//         id
+//         payouts
+//       }
+//     }
+//     marketPositions {
+//       valueBought
+//       valueSold
+//       netValue
+//       market {
+//         condition {
+//           id
+//         }
+//       }
+//     }
+//   }
+// }

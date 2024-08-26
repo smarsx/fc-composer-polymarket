@@ -38,6 +38,17 @@ interface HomeProps {
   initialAccounts: Account[];
 }
 
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const proxies = getProxiesFromUrl(context.req.url || '');
+  const fetchedAccounts = await getAccountsByProxy(proxies);
+
+  return {
+    props: {
+      initialAccounts: fetchedAccounts,
+    },
+  };
+};
+
 export default function Home({ initialAccounts }: HomeProps) {
   const [accounts] = useState<Account[]>(initialAccounts);
 
@@ -85,14 +96,3 @@ export default function Home({ initialAccounts }: HomeProps) {
     </main>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const proxies = getProxiesFromUrl(context.req.url || '');
-  const fetchedAccounts = await getAccountsByProxy(proxies);
-
-  return {
-    props: {
-      initialAccounts: fetchedAccounts,
-    },
-  };
-};
