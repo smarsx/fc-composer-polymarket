@@ -3,11 +3,11 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/componen
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { Account, Condition } from '@/lib/types';
+import { Account, Condition, MarketProfit } from '@/lib/types';
 
 interface ConditionSelectionFormProps {
   account: Account;
-  onSubmit: (selectedCondition: Condition) => void;
+  onSubmit: (marketProfit: MarketProfit) => void;
 }
 
 export default function ConditionSelectionForm({ account, onSubmit }: ConditionSelectionFormProps) {
@@ -16,11 +16,11 @@ export default function ConditionSelectionForm({ account, onSubmit }: ConditionS
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (selectedConditionId) {
-      const selectedCondition = account.marketProfits.find(
+      const selectedMarketProfit = account.marketProfits.find(
         mp => mp.condition.id === selectedConditionId
-      )?.condition;
-      if (selectedCondition) {
-        onSubmit(selectedCondition);
+      );
+      if (selectedMarketProfit) {
+        onSubmit(selectedMarketProfit);
       }
     }
   };

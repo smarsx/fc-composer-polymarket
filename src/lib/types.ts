@@ -2,6 +2,7 @@ export interface Condition {
   id: string;
   payouts: string[];
   title?: string;
+  src?: string;
 }
 
 export interface MarketProfit {

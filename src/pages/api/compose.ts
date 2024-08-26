@@ -226,3 +226,20 @@ export default async function handler(
     res.status(405).end();
   }
 }
+
+// "profit": "6892861216",
+// "condition": {
+//   "id": "0x265366ede72d73e137b2b9095a6cdc9be6149290caa295738a95e3d881ad0865",
+
+//   "valueBought": "100000000",
+//   "valueSold": "3913840400",
+
+// 100
+// 3913
+// 3813
+
+// use (valueSold - valueBought) / valueBought for old position
+// for current position ?
+
+// maybe can just use valueBought and profit to get percentChange ?
+// use ((valueBought + profit) - valueBought) / valueBought ??
