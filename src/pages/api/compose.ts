@@ -1,157 +1,12 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import {
-  AIRSTACK_URL,
-  DEPLOYMENT_URL,
-  GAMMA_BASE_URL,
-  POLYMARKET_SUBGRAPH_URL,
-} from "@/lib/constants";
+import { DEPLOYMENT_URL } from "@/lib/constants";
 import { getComputedAddress } from "@/lib/client";
-import { Account, GraphQLResponse, MarketPositionsResult } from "@/lib/types";
-import { insertAccounts } from "@/lib/sql";
-
-const airstackKey = process.env.AIRSTACK_PROD_KEY;
-
-function generateProxiesQueryString(proxies: string[]): string {
-  return proxies
-    .map((proxy) => `proxies=${encodeURIComponent(proxy)}`)
-    .join("&");
-}
-
-async function getAddressesFromFid(fid: string): Promise<string[]> {
-  if (!airstackKey || airstackKey == "") {
-    throw Error(`failed to load AIRSTACK_PROD_KEY`);
-  }
-
-  const query = `
-    query GetAddressesFromFid($identity: String!) {
-      Socials(
-        input: {
-          filter: { identity: { _in: [$identity] } }
-          blockchain: ethereum
-        }
-      ) {
-        Social {
-          userAssociatedAddresses
-        }
-      }
-    }
-  `;
-
-  const variables = {
-    identity: `fc_fid:${fid}`,
-  };
-
-  try {
-    const response = await fetch(AIRSTACK_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: airstackKey,
-      },
-      body: JSON.stringify({ query, variables }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-
-    if (data.data?.Socials?.Social?.[0]?.userAssociatedAddresses) {
-      return data.data.Socials.Social[0].userAssociatedAddresses;
-    } else {
-      return [];
-    }
-  } catch (error) {
-    console.error("Error fetching addresses:", error);
-    throw error;
-  }
-}
-
-async function getMarketPositions(
-  proxy: string
-): Promise<MarketPositionsResult> {
-  proxy = proxy.toLowerCase();
-  const query = `
-    query GetMarketPositions($proxy: String!) {
-      accounts(where: { id: $proxy }) {
-        marketProfits {
-          scaledProfit
-          condition {
-            id
-            payouts
-          }
-        }
-      }
-    }
-  `;
-
-  const variables = {
-    proxy: proxy.toLowerCase(),
-  };
-
-  try {
-    const response = await fetch(POLYMARKET_SUBGRAPH_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ query, variables }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data: GraphQLResponse = await response.json();
-
-    if (data.data?.accounts && data.data.accounts.length > 0) {
-      // Append the proxy to the account object
-      return {
-        ...data.data.accounts[0],
-        proxy,
-      };
-    } else {
-      return null;
-    }
-  } catch (error) {
-    console.error("Error fetching market positions:", error);
-    throw error;
-  }
-}
-
-async function fetchQuestionsByConditions(
-  conditionIds: string[]
-): Promise<Record<string, string>> {
-  const url = new URL("/markets", GAMMA_BASE_URL);
-
-  // Append each condition ID as a separate query parameter
-  conditionIds.forEach((id) => {
-    url.searchParams.append("condition_ids", id);
-  });
-
-  console.log("Requesting URL:", url.toString()); // Log the URL for debugging
-
-  try {
-    const response = await fetch(url.toString());
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const questionMap: Record<string, string> = {};
-    data.markets.forEach((market: any) => {
-      questionMap[market.id] = market.question;
-    });
-
-    return questionMap;
-  } catch (error) {
-    console.error("Error fetching questions:", error);
-    throw error;
-  }
-}
+import { insertPositions } from "@/lib/sql";
+import { getPositions, PositionsResult } from "@/lib/position";
+import { fetchQuestionsByConditions } from "@/lib/question";
+import { generateProxiesQueryString } from "@/lib/proxy";
+import { getAddressesFromFid } from "@/lib/fid";
 
 export default async function handler(
   req: NextApiRequest,
@@ -174,36 +29,31 @@ export default async function handler(
     const promises = addresses.map(getComputedAddress);
     const proxies = await Promise.all(promises);
 
-    // get markets given proxy addresses
-    const mpromises = proxies.map(getMarketPositions);
-    const markets = await Promise.all(mpromises);
+    // get positions given proxy addresses
+    const mpromises = proxies.map(getPositions);
+    const positions = await Promise.all(mpromises);
 
     // extract conditions
-    const allMarkets = markets.filter(
-      (market): market is Exclude<MarketPositionsResult, null> =>
-        market !== null
+    const allPositions = positions.filter(
+      (position): position is Exclude<PositionsResult, null> =>
+        position !== null
     );
-    const conditions = allMarkets.flatMap((market) =>
-      market.marketProfits.map((profit) => profit.condition.id)
+    const conditionIds = allPositions.flatMap((positions) =>
+      positions.map((position) => position.conditionId)
     );
 
     // fill in position titles from gamma api
     // https://gamma-api.polymarket.com/markets
     // https://docs.polymarket.com/?python#example-queries
-    const questionMap = await fetchQuestionsByConditions(conditions);
-    const finalMarkets: Account[] = allMarkets.map((market) => ({
-      ...market,
-      marketProfits: market.marketProfits.map((mp) => ({
-        ...mp,
-        condition: {
-          ...mp.condition,
-          title: questionMap[mp.condition.id],
-        },
-      })),
+    const questionMap = await fetchQuestionsByConditions(conditionIds);
+    const finalPositions = allPositions.flat().map((position) => ({
+      ...position,
+      src: questionMap[position.conditionId].src,
+      title: questionMap[position.conditionId].question,
     }));
 
     // save markets to sqlite
-    await insertAccounts(finalMarkets);
+    await insertPositions(finalPositions);
 
     res.status(200).json({
       type: "form",

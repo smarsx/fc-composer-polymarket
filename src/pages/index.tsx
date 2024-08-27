@@ -1,10 +1,11 @@
 import { GetServerSideProps } from 'next'
 import Image from "next/image";
 import { useState } from "react";
-import { Account, Condition, MarketProfit } from "@/lib/types";
-import { getAccountsByProxy } from "@/lib/sql";
+import { getPositionsByProxy } from "@/lib/sql";
 import ConditionSelectionForm from "@/components/conditions";
 import { DEPLOYMENT_URL } from "@/lib/constants";
+import { Position } from '@/lib/position';
+import { getProxiesFromUrl } from '@/lib/proxy';
 
 function generateEmbedUrl(
   title: string,
@@ -17,42 +18,25 @@ function generateEmbedUrl(
   }`;
 }
 
-function getProxiesFromUrl(url: string): string[] {
-  const parsedUrl = new URL(url);
-  return parsedUrl.searchParams.getAll('proxies');
-}
-
-export function flattenAccounts(accounts: Account[]): Account {
-  if (accounts.length === 0) {
-    console.error("Cannot flatten an empty array of accounts");
-    return {} as Account
-  }
-
-  return {
-    proxy: accounts[0].proxy,
-    marketProfits: accounts.reduce((acc, account) => [...acc, ...account.marketProfits], [] as MarketProfit[])
-  };
-}
-
-interface HomeProps {
-  initialAccounts: Account[];
+interface Props {
+  positions: Position[];
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const proxies = getProxiesFromUrl(context.req.url || '');
-  const fetchedAccounts = await getAccountsByProxy(proxies);
+  const fetchedPositions = await getPositionsByProxy(proxies);
 
   return {
     props: {
-      initialAccounts: fetchedAccounts,
+      positions: fetchedPositions
     },
   };
 };
 
-export default function Home({ initialAccounts }: HomeProps) {
-  const [accounts] = useState<Account[]>(initialAccounts);
+export default function Home({ positions }: Props) {
+  const [accounts] = useState<Position[]>(positions);
 
-  const handleSubmit = (mkt: MarketProfit) => {
+  const handleSubmit = (pos: Position) => {
     // grab selectedCondition src url
     window.parent.postMessage({
       type: "createCast",
@@ -91,7 +75,7 @@ export default function Home({ initialAccounts }: HomeProps) {
         </div>
       </div>
       <div>
-        <ConditionSelectionForm account={flattenAccounts(accounts)} onSubmit={handleSubmit} />
+        <ConditionSelectionForm positions={positions} onSubmit={handleSubmit} />
       </div>
     </main>
   );

@@ -3,24 +3,25 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/componen
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { Account, Condition, MarketProfit } from '@/lib/types';
+import { Position } from '@/lib/position';
+
 
 interface ConditionSelectionFormProps {
-  account: Account;
-  onSubmit: (marketProfit: MarketProfit) => void;
+  positions: Position[];
+  onSubmit: (position: Position) => void;
 }
 
-export default function ConditionSelectionForm({ account, onSubmit }: ConditionSelectionFormProps) {
+export default function ConditionSelectionForm({ positions, onSubmit }: ConditionSelectionFormProps) {
   const [selectedConditionId, setSelectedConditionId] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (selectedConditionId) {
-      const selectedMarketProfit = account.marketProfits.find(
-        mp => mp.condition.id === selectedConditionId
-      );
-      if (selectedMarketProfit) {
-        onSubmit(selectedMarketProfit);
+      const selectedPosition = positions.find(
+        pos => pos.conditionId === selectedConditionId
+      )
+      if (selectedPosition) {
+        onSubmit(selectedPosition);
       }
     }
   };
@@ -38,13 +39,13 @@ export default function ConditionSelectionForm({ account, onSubmit }: ConditionS
               onValueChange={setSelectedConditionId}
               value={selectedConditionId || undefined}
             >
-              {account.marketProfits.map((marketProfit) => (
-                <div className="flex items-center space-x-3 space-y-0" key={marketProfit.condition.id}>
-                  <RadioGroupItem value={marketProfit.condition.id} id={marketProfit.condition.id} />
-                  <Label htmlFor={marketProfit.condition.id} className="font-normal">
-                    {marketProfit.condition.title || 'Untitled Condition'}
+              {positions.map((position) => (
+                <div className="flex items-center space-x-3 space-y-0" key={position.conditionId}>
+                  <RadioGroupItem value={position.conditionId} id={position.conditionId} />
+                  <Label htmlFor={position.conditionId} className="font-normal">
+                    {position.title || 'Untitled Condition'}
                     <span className="block text-sm text-muted-foreground">
-                      Profit: {marketProfit.scaledProfit}
+                      Profit: {position.profits}
                     </span>
                   </Label>
                 </div>
