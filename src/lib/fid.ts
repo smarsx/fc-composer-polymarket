@@ -8,10 +8,10 @@ export async function getAddressesFromFid(fid: string): Promise<string[]> {
   }
 
   const query = `
-    query GetAddressesFromFid($identity: String!) {
+    query GetAddressesFromFid($identity: Identity!) {
       Socials(
         input: {
-          filter: { identity: { _in: [$identity] } }
+          filter: { identity: { _eq: $identity } }
           blockchain: ethereum
         }
       ) {
@@ -37,16 +37,20 @@ export async function getAddressesFromFid(fid: string): Promise<string[]> {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(
+        `HTTP error! status: ${response.status} ${response.statusText}`
+      );
     }
 
     const data = await response.json();
+    console.log("data: ", data);
 
-    if (data.data?.Socials?.Social?.[0]?.userAssociatedAddresses) {
-      return data.data.Socials.Social[0].userAssociatedAddresses;
-    } else {
-      return [];
+    if (data.errors) {
+      throw new Error(`GraphQL errors: ${JSON.stringify(data.errors)}`);
     }
+
+    // Assuming the structure of the response, extract and return the addresses
+    return data.data.Socials.Social[0]?.userAssociatedAddresses || [];
   } catch (error) {
     console.error("Error fetching addresses:", error);
     throw error;

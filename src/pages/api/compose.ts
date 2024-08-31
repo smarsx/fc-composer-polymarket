@@ -23,16 +23,35 @@ export default async function handler(
     }
 
     const addresses = await getAddressesFromFid(fid);
+    if (!addresses || addresses.length === 0) {
+      return res.status(200).json({
+        type: "form",
+        title: "error",
+        url: `${DEPLOYMENT_URL}/error?code=555`,
+      });
+    }
+
     // get proxy_addresses for addresses
     // ignoring magic link method rn. only metamask proxies.
     // https://polygonscan.com/address/0xaacfeea03eb1561c4e67d661e40682bd20e3541b#code
     // https://polygonscan.com/address/0xaB45c5A4B0c941a2F231C04C3f49182e1A254052
     const promises = addresses.map(getComputedAddress);
     const proxies = await Promise.all(promises);
+    console.log("proxies: ", proxies);
 
     // get positions given proxy addresses
     const mpromises = proxies.map(getPositions);
-    const positions = await Promise.all(mpromises);
+    const positions = await (
+      await Promise.all(mpromises)
+    ).filter((r) => r !== null);
+    console.log("positions: ", positions);
+    if (!positions || positions.length === 0) {
+      return res.status(200).json({
+        type: "form",
+        title: "error",
+        url: `${DEPLOYMENT_URL}/error?code=556`,
+      });
+    }
 
     // extract conditions
     const allPositions = positions.filter(
@@ -42,16 +61,26 @@ export default async function handler(
     const conditionIds = allPositions.flatMap((positions) =>
       positions.map((position) => position.conditionId)
     );
+    console.log("condition ids: ", conditionIds);
 
     // fill in position titles from gamma api
     // https://gamma-api.polymarket.com/markets
     // https://docs.polymarket.com/?python#example-queries
     const questionMap = await fetchQuestionsByConditions(conditionIds);
+    if (!questionMap) {
+      return res.status(200).json({
+        type: "form",
+        title: "error",
+        url: `${DEPLOYMENT_URL}/error?code=500`,
+      });
+    }
+
     const finalPositions = allPositions.flat().map((position) => ({
       ...position,
       src: questionMap[position.conditionId].src,
       title: questionMap[position.conditionId].question,
     }));
+    console.log("final pos: ", finalPositions);
 
     // save markets to sqlite
     await insertPositions(finalPositions);

@@ -4,16 +4,16 @@ import { polygon } from "viem/chains";
 import { SafeProxy } from "@/lib/safeProxy";
 import { SAFE_PROXY_ADDRESS } from "./constants";
 
-const polygonKey = process.env.POLYGON_KEY;
+const clientUrl = process.env.POLY_CLIENT_URL;
 
 const PolygonClient = (): PublicClient => {
-  if (!polygonKey || polygonKey == "") {
+  if (!clientUrl || clientUrl == "") {
     throw new Error("failed to load POLYGON_KEY");
   }
 
   return createPublicClient({
     chain: polygon,
-    transport: http(process.env.POLYGON_PROVIDER),
+    transport: http(clientUrl),
   });
 };
 

@@ -57,6 +57,7 @@ export async function getPositions(proxy: string): Promise<PositionsResult> {
     }
   `;
   const variables = { proxy: proxy.toLowerCase() };
+  console.log("vars: ", variables);
 
   try {
     const response = await fetch(POLYMARKET_SUBGRAPH_URL, {
@@ -66,10 +67,12 @@ export async function getPositions(proxy: string): Promise<PositionsResult> {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      console.error(`HTTP error! status: ${response.status}`);
+      // throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const data: GraphQLResponse = await response.json();
+    console.log("data: ", data);
 
     if (data.data?.accounts && data.data.accounts.length > 0) {
       const account = data.data.accounts[0];
