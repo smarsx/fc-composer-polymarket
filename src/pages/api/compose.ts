@@ -13,6 +13,7 @@ export default async function handler(
   res: NextApiResponse<ComposerActionFormResponse | ComposerActionMetadata>
 ) {
   if (req.method === "POST") {
+    console.log(req.body);
     const data = req.body;
     const fid = data.untrustedData.fid;
     if (!fid) {
