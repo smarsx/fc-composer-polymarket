@@ -1,3 +1,4 @@
+// https://github.com/dtechvision/fc-composer-actions/
 type ComposerActionFormResponse = {
   type: "form"; // Must be "form"
   title: string; // e.g. "Create Poll," "Create Event," "New Bounty"
