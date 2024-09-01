@@ -38,3 +38,4 @@ next-env.d.ts
 test.html
 
 *.env
+mydb.sqlite

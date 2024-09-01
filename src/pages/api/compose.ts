@@ -80,10 +80,16 @@ export default async function handler(
       src: questionMap[position.conditionId].src,
       title: questionMap[position.conditionId].question,
     }));
-    console.log("final pos: ", finalPositions);
+
+    // some positions missing payout[], not sure why? legacy market ? how read yes/no
+    const filteredPositions = finalPositions.filter(
+      (pos) => pos.payouts !== null
+    );
+
+    console.log("pos: ", filteredPositions);
 
     // save markets to sqlite
-    await insertPositions(finalPositions);
+    await insertPositions(filteredPositions);
 
     res.status(200).json({
       type: "form",

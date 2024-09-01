@@ -5,12 +5,9 @@ export async function fetchQuestionsByConditions(
 ): Promise<Record<string, { question: string; src: string }>> {
   const url = new URL("/markets", GAMMA_BASE_URL);
 
-  // Append each condition ID as a separate query parameter
   conditionIds.forEach((id) => {
     url.searchParams.append("condition_ids", id);
   });
-
-  console.log("Requesting URL:", url.toString()); // Log the URL for debugging
 
   try {
     const response = await fetch(url.toString());
@@ -21,8 +18,8 @@ export async function fetchQuestionsByConditions(
 
     const data = await response.json();
     const questionMap: Record<string, { question: string; src: string }> = {};
-    data.markets.forEach((market: any) => {
-      questionMap[market.id] = {
+    data.forEach((market: any) => {
+      questionMap[market.conditionId] = {
         question: market.question,
         src: market.image,
       };

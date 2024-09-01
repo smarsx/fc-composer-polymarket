@@ -41,9 +41,6 @@ export async function insertPositions(positions: Position[]) {
     `);
 
     for (const position of positions) {
-      const [numerator, denominator] = position.payouts[0]
-        .split("/")
-        .map(Number);
       await stmt.run(
         position.conditionId,
         position.proxy,
@@ -51,8 +48,8 @@ export async function insertPositions(positions: Position[]) {
         position.valueBought.toString(),
         position.title || "",
         position.src || "",
-        numerator,
-        denominator
+        position.payouts[0],
+        position.payouts[1]
       );
     }
 
