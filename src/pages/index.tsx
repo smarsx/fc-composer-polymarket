@@ -60,7 +60,7 @@ export default function Home({ positions: positionsIn }: Props) {
                 </RadioGroup>
               </div>
               <CardFooter className="px-0">
-                <Button type="submit" className="w-full" disabled={!selectedConditionId} onSubmit={() => {
+                <Button className="w-full" disabled={!selectedConditionId} onClick={() => {
                   const pos = positions.find(
                     pos => pos.conditionId === selectedConditionId
                   );
