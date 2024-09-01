@@ -40,9 +40,7 @@ export default async function handler(
 
     // get positions given proxy addresses
     const mpromises = proxies.map(getPositions);
-    const positions = await (
-      await Promise.all(mpromises)
-    ).filter((r) => r !== null);
+    const positions = (await Promise.all(mpromises)).filter((r) => r !== null);
     if (!positions || positions.length === 0) {
       return res.status(200).json({
         type: "form",
