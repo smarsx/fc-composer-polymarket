@@ -59,7 +59,7 @@ export async function getPositionsByProxy(
   return rows.map((row: QueryResultRow) => ({
     proxy: row.proxy,
     conditionId: row.condition_id,
-    payouts: [`${row.payout_numerator}/${row.payout_denominator}`],
+    payouts: [row.payout_numerator, row.payout_denominator],
     valueBought: parseInt(row.value_bought),
     profits: parseInt(row.profit),
     title: row.title,

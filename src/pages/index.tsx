@@ -53,8 +53,6 @@ export default function Home({ positions: positionsIn }: Props) {
                         {position.title || 'Untitled Condition'}
                         <span className="block text-sm text-muted-foreground">
                           {position.payouts[0] === '1' ? 'Yes' : 'No'} : {((position.profits / position.valueBought) * 100).toFixed(2) + "%"}
-                          <br/>
-                          payouts: {position.payouts}
                         </span>
                       </Label>
                     </div>
