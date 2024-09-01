@@ -54,7 +54,7 @@ export default function ConditionSelectionForm({ positions, onSubmit }: Conditio
             </RadioGroup>
           </div>
           <CardFooter className="px-0">
-            <Button type="submit" className="w-full" disabled={!selectedConditionId}>
+            <Button type="submit" className="w-full" disabled={!selectedConditionId} onClick={handleSubmit}>
               Submit
             </Button>
           </CardFooter>
