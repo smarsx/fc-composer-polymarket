@@ -66,7 +66,7 @@ export default function Home({ positions: positionsIn }: Props) {
                   );
                   console.log('pos: ', pos);
                   if (pos) {
-                    const genUrl = `${DEPLOYMENT_URL}/api/generate?src=${pos.src}&title=${pos.title}&pct=100&isYes=1`;
+                    const genUrl = encodeURI(`${DEPLOYMENT_URL}/api/generate?src=${pos.src}&title=${pos.title}&pct=100&isYes=1`);
                     window.parent.postMessage({
                       type: "createCast",
                       data: {
