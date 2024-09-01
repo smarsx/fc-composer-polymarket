@@ -75,7 +75,7 @@ export default function Home({ positions }: Props) {
         </div>
       </div>
       <div>
-        <ConditionSelectionForm positions={positions} onSubmit={handleSubmit} />
+        <ConditionSelectionForm positions={accounts} onSubmit={handleSubmit} />
       </div>
     </main>
   );
