@@ -52,9 +52,9 @@ export default function Home({ positions: positionsIn }: Props) {
                       <Label htmlFor={position.conditionId} className="font-normal">
                         {position.title || 'Untitled Condition'}
                         <span className="block text-sm text-muted-foreground">
-                          Outcome: {position.payouts[0] === '0' ? 'Yes' : 'No'}
+                          outcome: {position.payouts[0] === '0' ? 'Yes' : 'No'}
                           <br/>
-                          P/L: {((position.profits / position.valueBought) * 100).toFixed(2) + "%"}
+                          pnl: {((position.profits / position.valueBought) * 100).toFixed(2) + "%"}
                         </span>
                       </Label>
                     </div>
