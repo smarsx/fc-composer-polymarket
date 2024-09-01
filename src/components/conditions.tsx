@@ -4,6 +4,18 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Position } from '@/lib/position';
+import { DEPLOYMENT_URL } from '@/lib/constants';
+
+function generateEmbedUrl(
+  title: string,
+  pct: string,
+  src: string,
+  isYes: boolean
+): string {
+  return `${DEPLOYMENT_URL}/api/generate?src=${src}?title=${title}?pct=${pct}?isYes=${
+    isYes ? "1" : "0"
+  }`;
+}
 
 interface ConditionSelectionFormProps {
   positions: Position[];
@@ -53,7 +65,20 @@ export default function ConditionSelectionForm({ positions, onSubmit }: Conditio
           </div>
           <CardFooter className="px-0">
             <Button type="submit" className="w-full" disabled={!selectedConditionId} onSubmit={() => {
-              console.log('handle submit!')
+              const pos = positions.find(
+                pos => pos.conditionId === selectedConditionId
+              );
+              if (pos) {
+                window.parent.postMessage({
+                  type: "createCast",
+                  data: {
+                    cast: {
+                      text: "xx",
+                      embeds: [generateEmbedUrl(pos.title ?? '', '100', pos.src ?? '', true)]
+                    }
+                  }
+                })
+              }
             }}>
               Submit
             </Button>
