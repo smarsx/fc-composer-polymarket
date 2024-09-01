@@ -7,6 +7,8 @@ export function generateProxiesQueryString(proxies: string[]): string {
 }
 
 export function getProxiesFromUrl(url: string): string[] {
-  const parsedUrl = new URL(url, DEPLOYMENT_URL);
+  console.log("context.req.url: ", url);
+  const parsedUrl = new URL(`http://${process.env.HOST ?? "localhost"}${url}`);
+  console.log("parsed url: ", parsedUrl);
   return parsedUrl.searchParams.getAll("proxies");
 }
