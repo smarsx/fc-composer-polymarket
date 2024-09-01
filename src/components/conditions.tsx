@@ -69,15 +69,16 @@ export default function ConditionSelectionForm({ positions, onSubmit }: Conditio
                 pos => pos.conditionId === selectedConditionId
               );
               if (pos) {
+                const genUrl = generateEmbedUrl(pos.title ?? '', '100', pos.src ?? '', true)
                 window.parent.postMessage({
                   type: "createCast",
                   data: {
                     cast: {
                       text: "xx",
-                      embeds: [generateEmbedUrl(pos.title ?? '', '100', pos.src ?? '', true)]
+                      embeds: [genUrl]
                     }
                   }
-                })
+                }, "*");
               }
             }}>
               Submit
