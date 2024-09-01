@@ -1,21 +1,13 @@
 import { GetServerSideProps } from 'next'
 import { useState } from "react";
 import { getPositionsByProxy } from "@/lib/sql";
-import ConditionSelectionForm from "@/components/conditions";
 import { DEPLOYMENT_URL } from "@/lib/constants";
 import { Position } from '@/lib/position';
 import { getProxiesFromUrl } from '@/lib/proxy';
-
-function generateEmbedUrl(
-  title: string,
-  pct: string,
-  src: string,
-  isYes: boolean
-): string {
-  return `${DEPLOYMENT_URL}/api/generate?src=${src}?title=${title}?pct=${pct}?isYes=${
-    isYes ? "1" : "0"
-  }`;
-}
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Button } from '@/components/ui/button';
 
 interface Props {
   positions: Position[];
@@ -32,21 +24,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   };
 };
 
-export default function Home({ positions }: Props) {
-  const [accounts] = useState<Position[]>(positions);
-
-  const handleSubmit = (pos: Position) => {
-    console.log('main handle submit')
-    window.parent.postMessage({
-      type: "createCast",
-      data: {
-        cast: {
-          text: "xx",
-          embeds: [generateEmbedUrl(pos.title ?? '', '100', pos.src ?? '', true)]
-        }
-      }
-    })
-  };
+export default function Home({ positions: positionsIn }: Props) {
+  const [positions] = useState<Position[]>(positionsIn);
+  const [selectedConditionId, setSelectedConditionId] = useState<string | null>(null);
 
   return (
     <main className={`flex min-h-screen flex-col items-center justify-between p-24`}>
@@ -57,7 +37,53 @@ export default function Home({ positions }: Props) {
         </p>
       </div>
       <div>
-        <ConditionSelectionForm positions={accounts} onSubmit={handleSubmit} />
+        <Card className="w-[350px]">
+          <CardContent>
+            <form className="space-y-6">
+              <div className="space-y-3">
+                <Label>Positions</Label>
+                <RadioGroup
+                  onValueChange={setSelectedConditionId}
+                  value={selectedConditionId || undefined}
+                >
+                  {positions.map((position) => (
+                    <div className="flex items-center space-x-3 space-y-0" key={position.conditionId}>
+                      <RadioGroupItem value={position.conditionId} id={position.conditionId} />
+                      <Label htmlFor={position.conditionId} className="font-normal">
+                        {position.title || 'Untitled Condition'}
+                        <span className="block text-sm text-muted-foreground">
+                          Profit: {position.profits}
+                        </span>
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              </div>
+              <CardFooter className="px-0">
+                <Button type="submit" className="w-full" disabled={!selectedConditionId} onSubmit={() => {
+                  const pos = positions.find(
+                    pos => pos.conditionId === selectedConditionId
+                  );
+                  if (pos) {
+                    const genUrl = `${DEPLOYMENT_URL}/api/generate?src=${pos.src}?title=${pos.title}?pct=100?isYes=1`
+                    console.log('url: ', genUrl)
+                    window.parent.postMessage({
+                      type: "createCast",
+                      data: {
+                        cast: {
+                          text: "xx",
+                          embeds: [genUrl]
+                        }
+                      }
+                    }, "*");
+                  }
+                }}>
+                  Submit
+                </Button>
+              </CardFooter>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </main>
   );
