@@ -31,7 +31,7 @@ export default function ConditionSelectionForm({ positions, onSubmit }: Conditio
   return (
     <Card className="w-[350px]">
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form className="space-y-6">
           <div className="space-y-3">
             <Label>Positions</Label>
             <RadioGroup
@@ -52,7 +52,9 @@ export default function ConditionSelectionForm({ positions, onSubmit }: Conditio
             </RadioGroup>
           </div>
           <CardFooter className="px-0">
-            <Button type="submit" className="w-full" disabled={!selectedConditionId}>
+            <Button type="submit" className="w-full" disabled={!selectedConditionId} onSubmit={() => {
+              console.log('handle submit!')
+            }}>
               Submit
             </Button>
           </CardFooter>
