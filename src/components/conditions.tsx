@@ -6,17 +6,6 @@ import { Button } from "@/components/ui/button"
 import { Position } from '@/lib/position';
 import { DEPLOYMENT_URL } from '@/lib/constants';
 
-function generateEmbedUrl(
-  title: string,
-  pct: string,
-  src: string,
-  isYes: boolean
-): string {
-  return `${DEPLOYMENT_URL}/api/generate?src=${src}?title=${title}?pct=${pct}?isYes=${
-    isYes ? "1" : "0"
-  }`;
-}
-
 interface ConditionSelectionFormProps {
   positions: Position[];
   onSubmit: (position: Position) => void;
@@ -24,21 +13,6 @@ interface ConditionSelectionFormProps {
 
 export default function ConditionSelectionForm({ positions, onSubmit }: ConditionSelectionFormProps) {
   const [selectedConditionId, setSelectedConditionId] = useState<string | null>(null);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    console.log('handle submit')
-    e.preventDefault();
-    console.log('Handle submit triggered');
-    if (selectedConditionId) {
-      const selectedPosition = positions.find(
-        pos => pos.conditionId === selectedConditionId
-      );
-      if (selectedPosition) {
-        console.log('Calling onSubmit with selected position');
-        onSubmit(selectedPosition);
-      }
-    }
-  };
 
   return (
     <Card className="w-[350px]">
@@ -69,7 +43,7 @@ export default function ConditionSelectionForm({ positions, onSubmit }: Conditio
                 pos => pos.conditionId === selectedConditionId
               );
               if (pos) {
-                const genUrl = generateEmbedUrl(pos.title ?? '', '100', pos.src ?? '', true)
+                const genUrl = `${DEPLOYMENT_URL}/api/generate?src=${pos.src}?title=${pos.title}?pct=100?isYes=1`
                 window.parent.postMessage({
                   type: "createCast",
                   data: {
