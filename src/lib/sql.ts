@@ -12,7 +12,8 @@ async function initializeTables() {
       title TEXT NOT NULL,
       src TEXT NOT NULL,
       payout_numerator INTEGER NOT NULL,
-      payout_denominator INTEGER NOT NULL
+      payout_denominator INTEGER NOT NULL,
+      UNIQUE(condition_id, proxy)
     );
   `;
 }
@@ -20,8 +21,8 @@ async function initializeTables() {
 export async function insertPositions(positions: Position[]) {
   await initializeTables();
 
-  try {
-    for (const position of positions) {
+  for (const position of positions) {
+    try {
       await sql`
         INSERT INTO positions (
           condition_id, proxy, profit, value_bought, title, src, payout_numerator, payout_denominator
@@ -35,11 +36,14 @@ export async function insertPositions(positions: Position[]) {
           ${position.payouts[0]},
           ${position.payouts[1]}
         )
+        ON CONFLICT (condition_id, proxy) DO NOTHING;
       `;
+    } catch (error) {
+      console.error(
+        `Error inserting position: ${position.conditionId}, ${position.proxy}`,
+        error
+      );
     }
-  } catch (error) {
-    console.error("Error inserting positions:", error);
-    throw error;
   }
 }
 
