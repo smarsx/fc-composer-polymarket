@@ -1,62 +1,44 @@
-import sqlite3 from "sqlite3";
-import { open, Database } from "sqlite";
+import { sql, QueryResultRow } from "@vercel/postgres";
 import { Position } from "./position";
 
-let db: Database | null = null;
-
-async function openDb(): Promise<Database> {
-  if (!db) {
-    db = await open({
-      filename: "./mydb.sqlite",
-      driver: sqlite3.Database,
-    });
-    await initializeTables(db);
-  }
-  return db;
-}
-
-async function initializeTables(db: Database) {
-  await db.exec(`
+async function initializeTables() {
+  await sql`
     CREATE TABLE IF NOT EXISTS positions (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id SERIAL PRIMARY KEY,
       condition_id TEXT NOT NULL,
       proxy TEXT NOT NULL,
       profit TEXT NOT NULL,
-      valueBought TEXT NOT NULL,
+      value_bought TEXT NOT NULL,
       title TEXT NOT NULL,
       src TEXT NOT NULL,
-      payoutNumerator INTEGER NOT NULL,
-      payoutDenominator INTEGER NOT NULL
+      payout_numerator INTEGER NOT NULL,
+      payout_denominator INTEGER NOT NULL
     );
-  `);
+  `;
 }
 
 export async function insertPositions(positions: Position[]) {
-  const db = await openDb();
-  await db.run("BEGIN TRANSACTION");
+  await initializeTables();
+
   try {
-    const stmt = await db.prepare(`
-      INSERT INTO positions (condition_id, proxy, profit, valueBought, title, src, payoutNumerator, payoutDenominator)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `);
-
     for (const position of positions) {
-      await stmt.run(
-        position.conditionId,
-        position.proxy,
-        position.profits.toString(),
-        position.valueBought.toString(),
-        position.title || "",
-        position.src || "",
-        position.payouts[0],
-        position.payouts[1]
-      );
+      await sql`
+        INSERT INTO positions (
+          condition_id, proxy, profit, value_bought, title, src, payout_numerator, payout_denominator
+        ) VALUES (
+          ${position.conditionId},
+          ${position.proxy},
+          ${position.profits.toString()},
+          ${position.valueBought.toString()},
+          ${position.title || ""},
+          ${position.src || ""},
+          ${position.payouts[0]},
+          ${position.payouts[1]}
+        )
+      `;
     }
-
-    await stmt.finalize();
-    await db.run("COMMIT");
   } catch (error) {
-    await db.run("ROLLBACK");
+    console.error("Error inserting positions:", error);
     throw error;
   }
 }
@@ -64,21 +46,16 @@ export async function insertPositions(positions: Position[]) {
 export async function getPositionsByProxy(
   proxyAddresses: string[]
 ): Promise<Position[]> {
-  const db = await openDb();
-  const placeholders = proxyAddresses.map(() => "?").join(",");
+  const placeholders = proxyAddresses.map((_, i) => `$${i + 1}`).join(",");
+  const query = `SELECT * FROM positions WHERE proxy IN (${placeholders})`;
 
-  const rows = await db.all(
-    `
-    SELECT * FROM positions WHERE proxy IN (${placeholders})
-  `,
-    proxyAddresses
-  );
+  const { rows } = await sql.query(query, proxyAddresses);
 
-  return rows.map((row) => ({
+  return rows.map((row: QueryResultRow) => ({
     proxy: row.proxy,
     conditionId: row.condition_id,
-    payouts: [`${row.payoutNumerator}/${row.payoutDenominator}`],
-    valueBought: parseInt(row.valueBought),
+    payouts: [`${row.payout_numerator}/${row.payout_denominator}`],
+    valueBought: parseInt(row.value_bought),
     profits: parseInt(row.profit),
     title: row.title,
     src: row.src,
