@@ -86,17 +86,16 @@ export default async function handler(
 
     res.status(200).json({
       type: "form",
-      title: "pmpost",
+      title: "pm-flex",
       url: `${DEPLOYMENT_URL}/?${generateProxiesQueryString(proxies)}`,
     });
   } else if (req.method === "GET") {
     res.status(200).json({
       type: "composer",
-      name: "Create Poll",
-      icon: "checkbox", // supported list: https://docs.farcaster.xyz/reference/actions/spec#valid-icons
-      description: "Create a poll frame",
-      aboutUrl: "https://your-app-server.example.com/about",
-      imageUrl: "https://your-app-server.example.com/static/logo.png",
+      name: "Polymarket Flex",
+      icon: "checkbox",
+      description: "Flex a Polymarket Position",
+      imageUrl: `${DEPLOYMENT_URL}/logo.svg`,
       action: {
         type: "post",
       },
@@ -105,20 +104,3 @@ export default async function handler(
     res.status(405).end();
   }
 }
-
-// "profit": "6892861216",
-// "condition": {
-//   "id": "0x265366ede72d73e137b2b9095a6cdc9be6149290caa295738a95e3d881ad0865",
-
-//   "valueBought": "100000000",
-//   "valueSold": "3913840400",
-
-// 100
-// 3913
-// 3813
-
-// use (valueSold - valueBought) / valueBought for old position
-// for current position ?
-
-// maybe can just use valueBought and profit to get percentChange ?
-// use ((valueBought + profit) - valueBought) / valueBought ??
