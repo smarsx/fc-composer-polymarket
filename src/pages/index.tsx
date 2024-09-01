@@ -24,6 +24,7 @@ interface Props {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const proxies = getProxiesFromUrl(context.req.url || '');
+  console.log('proxies: ', proxies)
   const fetchedPositions = await getPositionsByProxy(proxies);
   console.log('fetched: ', fetchedPositions)
 
