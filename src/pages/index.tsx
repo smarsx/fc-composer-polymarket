@@ -36,11 +36,12 @@ export default function Home({ positions }: Props) {
   const [accounts] = useState<Position[]>(positions);
 
   const handleSubmit = (pos: Position) => {
+    console.log('main handle submit')
     window.parent.postMessage({
       type: "createCast",
       data: {
         cast: {
-          text: "",
+          text: "xx",
           embeds: [generateEmbedUrl(pos.title ?? '', '100', pos.src ?? '', true)]
         }
       }

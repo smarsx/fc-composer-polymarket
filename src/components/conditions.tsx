@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
+import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
@@ -15,12 +15,16 @@ export default function ConditionSelectionForm({ positions, onSubmit }: Conditio
   const [selectedConditionId, setSelectedConditionId] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
+    console.log('handle submit')
     e.preventDefault();
+    console.log('handle submit post prevent default')
     if (selectedConditionId) {
       const selectedPosition = positions.find(
         pos => pos.conditionId === selectedConditionId
       )
+      console.log(selectedConditionId)
       if (selectedPosition) {
+        console.log('on submit')
         onSubmit(selectedPosition);
       }
     }
