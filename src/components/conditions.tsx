@@ -28,9 +28,6 @@ export default function ConditionSelectionForm({ positions, onSubmit }: Conditio
 
   return (
     <Card className="w-[350px]">
-      <CardHeader>
-        <CardTitle>Select a Position</CardTitle>
-      </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-3">
