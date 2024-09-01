@@ -46,6 +46,7 @@ export async function insertPositions(positions: Position[]) {
 export async function getPositionsByProxy(
   proxyAddresses: string[]
 ): Promise<Position[]> {
+  proxyAddresses = proxyAddresses.map((a) => a.toLowerCase());
   const placeholders = proxyAddresses.map((_, i) => `$${i + 1}`).join(",");
   const query = `SELECT * FROM positions WHERE proxy IN (${placeholders})`;
 
