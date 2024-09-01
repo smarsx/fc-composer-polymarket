@@ -43,7 +43,6 @@ export async function getAddressesFromFid(fid: string): Promise<string[]> {
     }
 
     const data = await response.json();
-    console.log("data: ", data);
 
     if (data.errors) {
       throw new Error(`GraphQL errors: ${JSON.stringify(data.errors)}`);

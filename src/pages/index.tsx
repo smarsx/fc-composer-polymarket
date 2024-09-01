@@ -66,8 +66,7 @@ export default function Home({ positions: positionsIn }: Props) {
                   );
                   if (pos) {
                     const outcome = pos.payouts[0] === '1' ? '1' : '0'
-                    const pct = (pos.profits / pos.valueBought).toFixed(2).toString()
-                    const genUrl = encodeURI(`${DEPLOYMENT_URL}/api/generate?src=${pos.src}&title=${pos.title}&pct=${pct}&outcome=${outcome}`);
+                    const genUrl = encodeURI(`${DEPLOYMENT_URL}/api/generate?src=${pos.src}&title=${pos.title}&pct=${pos.pct}&outcome=${outcome}`);
                     window.parent.postMessage({
                       type: "createCast",
                       data: {

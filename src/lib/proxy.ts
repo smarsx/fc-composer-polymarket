@@ -1,5 +1,3 @@
-import { DEPLOYMENT_URL } from "./constants";
-
 export function generateProxiesQueryString(proxies: string[]): string {
   return proxies
     .map((proxy) => `proxies=${encodeURIComponent(proxy)}`)
@@ -7,8 +5,7 @@ export function generateProxiesQueryString(proxies: string[]): string {
 }
 
 export function getProxiesFromUrl(url: string): string[] {
-  console.log("context.req.url: ", url);
+  // dont think process.env.HOST is valid when deployed but doesn't matter, just getting the query anyways
   const parsedUrl = new URL(`http://${process.env.HOST ?? "localhost"}${url}`);
-  console.log("parsed url: ", parsedUrl);
   return parsedUrl.searchParams.getAll("proxies");
 }

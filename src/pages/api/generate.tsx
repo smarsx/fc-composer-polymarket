@@ -12,7 +12,8 @@ export default async function handler(request: NextRequest) {
   const title = searchParams.get('title');
   const outcome = searchParams.get('outcome') === '1';
   const pct = searchParams.get('pct');
-  const emoji = parseFloat(pct ?? '1.0') > 0 ? getRandomPositiveEmoji() : getRandomNegativeEmoji();
+  const isGain = parseFloat(pct ?? '0.1') > 0 
+  const emoji = isGain ? getRandomPositiveEmoji() : getRandomNegativeEmoji();
   const strPct = !!pct && pct.length > 0 ? pct + "%" : ""
 
   if (!src) {
@@ -114,7 +115,7 @@ export default async function handler(request: NextRequest) {
             <div style={{ display: 'flex', height: '30%',  justifyContent: 'flex-end', gap: '0px' }}>
               {/* Percent section */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                {outcome ? (
+                {isGain ? (
                   <span style={{ color: 'green', fontSize: '84px', fontWeight: 'bold' }}>{strPct}</span>
                 ) : (
                   <span style={{ color: 'red', fontSize: '84px', fontWeight: 'bold' }}>{strPct}</span>

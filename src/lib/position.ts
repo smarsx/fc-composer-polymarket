@@ -8,6 +8,7 @@ export interface Position {
   profits: number;
   title?: string;
   src?: string;
+  pct?: string;
 }
 
 export type PositionsResult = Position[] | null;
@@ -57,7 +58,6 @@ export async function getPositions(proxy: string): Promise<PositionsResult> {
     }
   `;
   const variables = { proxy: proxy.toLowerCase() };
-  console.log("vars: ", variables);
 
   try {
     const response = await fetch(POLYMARKET_SUBGRAPH_URL, {
@@ -72,7 +72,6 @@ export async function getPositions(proxy: string): Promise<PositionsResult> {
     }
 
     const data: GraphQLResponse = await response.json();
-    console.log("data: ", data);
 
     if (data.data?.accounts && data.data.accounts.length > 0) {
       const account = data.data.accounts[0];
@@ -95,6 +94,10 @@ export async function getPositions(proxy: string): Promise<PositionsResult> {
         if (positionsMap.has(conditionId)) {
           const existingPosition = positionsMap.get(conditionId)!;
           existingPosition.valueBought = parseFloat(position.valueBought);
+          existingPosition.pct = (
+            (existingPosition.profits / existingPosition.valueBought) *
+            100
+          ).toFixed(2);
         } else {
           positionsMap.set(conditionId, {
             proxy: proxy.toLowerCase(),
