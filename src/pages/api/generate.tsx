@@ -111,7 +111,7 @@ export default async function handler(request: NextRequest) {
               </div>
             </div>
             {/* Bottom section */}
-            <div style={{ display: 'flex', height: '30%',  justifyContent: 'flex-end', gap: '4px' }}>
+            <div style={{ display: 'flex', height: '30%',  justifyContent: 'flex-end', gap: '0px' }}>
               {/* Percent section */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {isYes ? (
@@ -121,7 +121,7 @@ export default async function handler(request: NextRequest) {
                 )}
               </div>
               {/* Emoji placeholder */}
-              <div style={{ width: '25%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', fontSize: '36px' }}>
+              <div style={{ width: '15%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', fontSize: '36px' }}>
                 {emoji}
               </div>
             </div>
