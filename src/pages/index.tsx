@@ -72,7 +72,7 @@ export default function Home({ positions: positionsIn }: Props) {
                       type: "createCast",
                       data: {
                         cast: {
-                          text: "xx",
+                          text: "",
                           embeds: [genUrl]
                         }
                       }
