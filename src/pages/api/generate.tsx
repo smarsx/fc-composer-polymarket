@@ -10,7 +10,7 @@ export default async function handler(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const src = searchParams.get('src');
   const title = searchParams.get('title');
-  const isYes = searchParams.get('isYes') == '1';
+  const outcome = searchParams.get('outcome') === '1';
   const pct = searchParams.get('pct');
   const emoji = parseFloat(pct ?? '1.0') > 0 ? getRandomPositiveEmoji() : getRandomNegativeEmoji();
   const strPct = !!pct && pct.length > 0 ? pct + "%" : ""
@@ -97,7 +97,7 @@ export default async function handler(request: NextRequest) {
                 {/* Yes/No section */}
                 <div style={{ width: '30%', display: 'flex', flexDirection: 'column' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    {isYes ? (
+                    {outcome ? (
                       <div style={{ backgroundColor: '#f0fff0', borderRadius: '5px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '12px 18px' }}>
                         <span style={{ color: 'green', fontSize: '38px' }}>Yes</span>
                       </div>
@@ -114,7 +114,7 @@ export default async function handler(request: NextRequest) {
             <div style={{ display: 'flex', height: '30%',  justifyContent: 'flex-end', gap: '0px' }}>
               {/* Percent section */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                {isYes ? (
+                {outcome ? (
                   <span style={{ color: 'green', fontSize: '84px', fontWeight: 'bold' }}>{strPct}</span>
                 ) : (
                   <span style={{ color: 'red', fontSize: '84px', fontWeight: 'bold' }}>{strPct}</span>

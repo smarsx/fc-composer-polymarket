@@ -64,9 +64,10 @@ export default function Home({ positions: positionsIn }: Props) {
                   const pos = positions.find(
                     pos => pos.conditionId === selectedConditionId
                   );
-                  console.log('pos: ', pos);
                   if (pos) {
-                    const genUrl = encodeURI(`${DEPLOYMENT_URL}/api/generate?src=${pos.src}&title=${pos.title}&pct=100&isYes=1`);
+                    const outcome = pos.payouts[0] === '1' ? '1' : '0'
+                    const pct = (pos.profits / pos.valueBought).toFixed(2).toString()
+                    const genUrl = encodeURI(`${DEPLOYMENT_URL}/api/generate?src=${pos.src}&title=${pos.title}&pct=${pct}&outcome=${outcome}`);
                     window.parent.postMessage({
                       type: "createCast",
                       data: {
