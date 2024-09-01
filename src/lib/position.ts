@@ -8,7 +8,6 @@ export interface Position {
   profits: number;
   title?: string;
   src?: string;
-  pct?: string;
 }
 
 export type PositionsResult = Position[] | null;
@@ -94,10 +93,6 @@ export async function getPositions(proxy: string): Promise<PositionsResult> {
         if (positionsMap.has(conditionId)) {
           const existingPosition = positionsMap.get(conditionId)!;
           existingPosition.valueBought = parseFloat(position.valueBought);
-          existingPosition.pct = (
-            (existingPosition.profits / existingPosition.valueBought) *
-            100
-          ).toFixed(2);
         } else {
           positionsMap.set(conditionId, {
             proxy: proxy.toLowerCase(),
