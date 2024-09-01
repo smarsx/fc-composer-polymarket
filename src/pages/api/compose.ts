@@ -94,7 +94,7 @@ export default async function handler(
     res.status(200).json({
       type: "form",
       title: "pmpost",
-      url: `${DEPLOYMENT_URL}?${generateProxiesQueryString(proxies)}`,
+      url: `${DEPLOYMENT_URL}/?${generateProxiesQueryString(proxies)}`,
     });
   } else if (req.method === "GET") {
     res.status(200).json({
