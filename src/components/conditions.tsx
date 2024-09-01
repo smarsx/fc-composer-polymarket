@@ -5,7 +5,6 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Position } from '@/lib/position';
 
-
 interface ConditionSelectionFormProps {
   positions: Position[];
   onSubmit: (position: Position) => void;
@@ -17,14 +16,13 @@ export default function ConditionSelectionForm({ positions, onSubmit }: Conditio
   const handleSubmit = (e: React.FormEvent) => {
     console.log('handle submit')
     e.preventDefault();
-    console.log('handle submit post prevent default')
+    console.log('Handle submit triggered');
     if (selectedConditionId) {
       const selectedPosition = positions.find(
         pos => pos.conditionId === selectedConditionId
-      )
-      console.log(selectedConditionId)
+      );
       if (selectedPosition) {
-        console.log('on submit')
+        console.log('Calling onSubmit with selected position');
         onSubmit(selectedPosition);
       }
     }
@@ -33,7 +31,7 @@ export default function ConditionSelectionForm({ positions, onSubmit }: Conditio
   return (
     <Card className="w-[350px]">
       <CardContent>
-        <form onSubmit={(e) => handleSubmit(e)} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-3">
             <Label>Positions</Label>
             <RadioGroup
@@ -54,7 +52,7 @@ export default function ConditionSelectionForm({ positions, onSubmit }: Conditio
             </RadioGroup>
           </div>
           <CardFooter className="px-0">
-            <Button type="submit" className="w-full" disabled={!selectedConditionId} onClick={(e) => handleSubmit(e)}>
+            <Button type="submit" className="w-full" disabled={!selectedConditionId}>
               Submit
             </Button>
           </CardFooter>
