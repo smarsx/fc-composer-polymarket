@@ -52,7 +52,7 @@ export default function Home({ positions: positionsIn }: Props) {
                       <Label htmlFor={position.conditionId} className="font-normal">
                         {position.title || 'Untitled Condition'}
                         <span className="block text-sm text-muted-foreground">
-                          {position.payouts[0] === '1' ? 'Yes' : 'No'} : {((position.profits / position.valueBought) * 100).toFixed(2) + "%"}
+                          {position.payouts[0] == '1' ? 'Yes' : 'No'}: {((position.profits / position.valueBought) * 100).toFixed(2) + "%"}
                         </span>
                       </Label>
                     </div>
@@ -65,7 +65,7 @@ export default function Home({ positions: positionsIn }: Props) {
                     pos => pos.conditionId === selectedConditionId
                   );
                   if (pos) {
-                    const outcome = pos.payouts[0] === '1' ? '1' : '0'
+                    const outcome = pos.payouts[0] == '1' ? '1' : '0'
                     const pct = ((pos.profits / pos.valueBought) * 100).toFixed(2)
                     const genUrl = encodeURI(`${DEPLOYMENT_URL}/api/generate?src=${pos.src}&title=${pos.title}&pct=${pct}&outcome=${outcome}`);
                     window.parent.postMessage({
