@@ -1,4 +1,3 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import { DEPLOYMENT_URL } from "@/lib/constants";
 import { getComputedAddress } from "@/lib/client";
@@ -13,13 +12,14 @@ export default async function handler(
   res: NextApiResponse<ComposerActionFormResponse | ComposerActionMetadata>
 ) {
   if (req.method === "POST") {
-    console.log(req.body);
     const data = req.body;
     const fid = data.untrustedData.fid;
     if (!fid) {
-      console.log(`no fid in ${req.body}`);
-      console.log("exiting");
-      return;
+      return res.status(200).json({
+        type: "form",
+        title: "error",
+        url: `${DEPLOYMENT_URL}/error?code=500`,
+      });
     }
 
     const addresses = await getAddressesFromFid(fid);
@@ -37,14 +37,12 @@ export default async function handler(
     // https://polygonscan.com/address/0xaB45c5A4B0c941a2F231C04C3f49182e1A254052
     const promises = addresses.map(getComputedAddress);
     const proxies = await Promise.all(promises);
-    console.log("proxies: ", proxies);
 
     // get positions given proxy addresses
     const mpromises = proxies.map(getPositions);
     const positions = await (
       await Promise.all(mpromises)
     ).filter((r) => r !== null);
-    console.log("positions: ", positions);
     if (!positions || positions.length === 0) {
       return res.status(200).json({
         type: "form",
@@ -61,7 +59,6 @@ export default async function handler(
     const conditionIds = allPositions.flatMap((positions) =>
       positions.map((position) => position.conditionId)
     );
-    console.log("condition ids: ", conditionIds);
 
     // fill in position titles from gamma api
     // https://gamma-api.polymarket.com/markets
@@ -85,8 +82,6 @@ export default async function handler(
     const filteredPositions = finalPositions.filter(
       (pos) => pos.payouts !== null
     );
-
-    console.log("pos: ", filteredPositions);
 
     // save markets to sqlite
     await insertPositions(filteredPositions);
@@ -129,25 +124,3 @@ export default async function handler(
 
 // maybe can just use valueBought and profit to get percentChange ?
 // use ((valueBought + profit) - valueBought) / valueBought ??
-
-// query MyQuery {
-//   accounts(where: {id:"0x5f01e0886b508a357ac198cbe72af3bf74fe9d3d"}) {
-//     marketProfits {
-//       profit
-//       condition {
-//         id
-//         payouts
-//       }
-//     }
-//     marketPositions {
-//       valueBought
-//       valueSold
-//       netValue
-//       market {
-//         condition {
-//           id
-//         }
-//       }
-//     }
-//   }
-// }

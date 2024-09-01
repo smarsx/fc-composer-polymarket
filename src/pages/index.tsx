@@ -1,5 +1,4 @@
 import { GetServerSideProps } from 'next'
-import Image from "next/image";
 import { useState } from "react";
 import { getPositionsByProxy } from "@/lib/sql";
 import ConditionSelectionForm from "@/components/conditions";
@@ -24,9 +23,7 @@ interface Props {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const proxies = getProxiesFromUrl(context.req.url || '');
-  console.log('proxies: ', proxies)
   const fetchedPositions = await getPositionsByProxy(proxies);
-  console.log('fetched: ', fetchedPositions)
 
   return {
     props: {
@@ -39,13 +36,12 @@ export default function Home({ positions }: Props) {
   const [accounts] = useState<Position[]>(positions);
 
   const handleSubmit = (pos: Position) => {
-    // grab selectedCondition src url
     window.parent.postMessage({
       type: "createCast",
       data: {
         cast: {
           text: "",
-          embeds: [generateEmbedUrl('', '', '', true)]
+          embeds: [generateEmbedUrl(pos.title ?? '', '100', pos.src ?? '', true)]
         }
       }
     })
