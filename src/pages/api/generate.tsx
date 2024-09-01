@@ -13,7 +13,7 @@ export default async function handler(request: NextRequest) {
   const isYes = searchParams.get('isYes') == '1';
   const pct = searchParams.get('pct');
   const emoji = parseFloat(pct ?? '1.0') > 0 ? getRandomPositiveEmoji() : getRandomNegativeEmoji();
-  const strPct = !!pct && pct.length > 0 ? pct + " %" : ""
+  const strPct = !!pct && pct.length > 0 ? pct + "%" : ""
 
   if (!src) {
     return new ImageResponse(<>invalid img</>, {
@@ -111,10 +111,14 @@ export default async function handler(request: NextRequest) {
               </div>
             </div>
             {/* Bottom section */}
-            <div style={{ display: 'flex', height: '30%',  justifyContent: 'flex-end', gap: '12px' }}>
+            <div style={{ display: 'flex', height: '30%',  justifyContent: 'flex-end', gap: '4px' }}>
               {/* Percent section */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span style={{ color: '#4ade80', fontSize: '84px', fontWeight: 'bold' }}>{strPct}</span>
+                {isYes ? (
+                  <span style={{ color: '#f0fff0', fontSize: '84px', fontWeight: 'bold' }}>{strPct}</span>
+                ) : (
+                  <span style={{ color: '#fff0f0', fontSize: '84px', fontWeight: 'bold' }}>{strPct}</span>
+                )}
               </div>
               {/* Emoji placeholder */}
               <div style={{ width: '25%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', fontSize: '36px' }}>

@@ -1,14 +1,4 @@
-const positiveEmojis: string[] = [
-  "😊",
-  "😍",
-  "🥰",
-  "😎",
-  "👍",
-  "🎉",
-  "🤣",
-  "🥳",
-  "🤩",
-];
+const positiveEmojis: string[] = ["😎", "👍", "🎉", "🥳"];
 const negativeEmojis: string[] = [
   "😢",
   "😞",
