@@ -115,9 +115,9 @@ export default async function handler(request: NextRequest) {
               {/* Percent section */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {isYes ? (
-                  <span style={{ color: '#f0fff0', fontSize: '84px', fontWeight: 'bold' }}>{strPct}</span>
+                  <span style={{ color: 'green', fontSize: '84px', fontWeight: 'bold' }}>{strPct}</span>
                 ) : (
-                  <span style={{ color: '#fff0f0', fontSize: '84px', fontWeight: 'bold' }}>{strPct}</span>
+                  <span style={{ color: 'red', fontSize: '84px', fontWeight: 'bold' }}>{strPct}</span>
                 )}
               </div>
               {/* Emoji placeholder */}
