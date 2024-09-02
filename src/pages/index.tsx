@@ -8,6 +8,7 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Button } from '@/components/ui/button';
+import { getPct } from '@/lib/utils';
 
 interface Props {
   positions: Position[];
@@ -52,7 +53,7 @@ export default function Home({ positions: positionsIn }: Props) {
                       <Label htmlFor={position.conditionId} className="font-normal">
                         {position.title || ''}
                         <span className="block text-sm text-muted-foreground">
-                          {((position.profits / position.valueBought) * 100).toFixed(2) + "%"}
+                          {getPct(position.profits, position.valueBought) + "%"}
                         </span>
                       </Label>
                     </div>
@@ -65,7 +66,7 @@ export default function Home({ positions: positionsIn }: Props) {
                     pos => pos.conditionId === selectedConditionId
                   );
                   if (pos) {
-                    const pct = ((pos.profits / pos.valueBought) * 100).toFixed(2)
+                    const pct = getPct(pos.profits, pos.valueBought)
                     const genUrl = encodeURI(`${DEPLOYMENT_URL}/api/generate?src=${pos.src}&title=${pos.title}&pct=${pct}`);
                     window.parent.postMessage({
                       type: "createCast",
