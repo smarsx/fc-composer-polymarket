@@ -6,5 +6,5 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function getPct(profits: number, valueBought: number): string {
-  return Math.max((profits / valueBought) * 100).toFixed(2);
+  return Math.max(-100, (profits / valueBought) * 100).toFixed(2);
 }
