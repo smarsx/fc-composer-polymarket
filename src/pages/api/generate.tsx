@@ -108,9 +108,9 @@ export default async function handler(request: NextRequest) {
               {/* Percent section */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {isGain ? (
-                  <span style={{ color: 'green', fontSize: '84px', fontWeight: 'bold' }}>{strPct}</span>
+                  <span style={{ color: 'green', fontSize: '84px', fontWeight: 'bold' }}>+{strPct}</span>
                 ) : (
-                  <span style={{ color: 'red', fontSize: '84px', fontWeight: 'bold' }}>{strPct}</span>
+                  <span style={{ color: 'red', fontSize: '84px', fontWeight: 'bold' }}>-{strPct}</span>
                 )}
               </div>
               {/* Emoji placeholder */}
