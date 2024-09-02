@@ -110,11 +110,11 @@ export default async function handler(request: NextRequest) {
                 {isGain ? (
                   <span style={{ color: 'green', fontSize: '84px', fontWeight: 'bold' }}>+{strPct}</span>
                 ) : (
-                  <span style={{ color: 'red', fontSize: '84px', fontWeight: 'bold' }}>-{strPct}</span>
+                  <span style={{ color: 'red', fontSize: '84px', fontWeight: 'bold' }}>{strPct}</span>
                 )}
               </div>
               {/* Emoji placeholder */}
-              <div style={{ width: '15%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', fontSize: '36px' }}>
+              <div style={{ width: '5%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', fontSize: '36px' }}>
                 {emoji}
               </div>
             </div>
