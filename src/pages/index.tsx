@@ -50,9 +50,9 @@ export default function Home({ positions: positionsIn }: Props) {
                     <div className="flex items-center space-x-3 space-y-0" key={position.conditionId}>
                       <RadioGroupItem value={position.conditionId} id={position.conditionId} />
                       <Label htmlFor={position.conditionId} className="font-normal">
-                        {position.title || 'Untitled Condition'}
+                        {position.title || ''}
                         <span className="block text-sm text-muted-foreground">
-                          {position.payouts[0] == '1' ? 'Yes' : 'No'}: {((position.profits / position.valueBought) * 100).toFixed(2) + "%"}
+                          {((position.profits / position.valueBought) * 100).toFixed(2) + "%"}
                         </span>
                       </Label>
                     </div>
@@ -65,9 +65,8 @@ export default function Home({ positions: positionsIn }: Props) {
                     pos => pos.conditionId === selectedConditionId
                   );
                   if (pos) {
-                    const outcome = pos.payouts[0] == '1' ? '1' : '0'
                     const pct = ((pos.profits / pos.valueBought) * 100).toFixed(2)
-                    const genUrl = encodeURI(`${DEPLOYMENT_URL}/api/generate?src=${pos.src}&title=${pos.title}&pct=${pct}&outcome=${outcome}`);
+                    const genUrl = encodeURI(`${DEPLOYMENT_URL}/api/generate?src=${pos.src}&title=${pos.title}&pct=${pct}`);
                     window.parent.postMessage({
                       type: "createCast",
                       data: {

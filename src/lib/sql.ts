@@ -11,8 +11,6 @@ async function initializeTables() {
       value_bought TEXT NOT NULL,
       title TEXT NOT NULL,
       src TEXT NOT NULL,
-      payout_numerator INTEGER NOT NULL,
-      payout_denominator INTEGER NOT NULL,
       UNIQUE(condition_id, proxy)
     );
   `;
@@ -25,16 +23,14 @@ export async function insertPositions(positions: Position[]) {
     try {
       await sql`
         INSERT INTO positions (
-          condition_id, proxy, profit, value_bought, title, src, payout_numerator, payout_denominator
+          condition_id, proxy, profit, value_bought, title, src
         ) VALUES (
           ${position.conditionId},
           ${position.proxy},
           ${position.profits.toString()},
           ${position.valueBought.toString()},
           ${position.title || ""},
-          ${position.src || ""},
-          ${position.payouts[0]},
-          ${position.payouts[1]}
+          ${position.src || ""}
         )
         ON CONFLICT (condition_id, proxy) DO NOTHING;
       `;
@@ -59,7 +55,6 @@ export async function getPositionsByProxy(
   return rows.map((row: QueryResultRow) => ({
     proxy: row.proxy,
     conditionId: row.condition_id,
-    payouts: [row.payout_numerator, row.payout_denominator],
     valueBought: parseInt(row.value_bought),
     profits: parseInt(row.profit),
     title: row.title,

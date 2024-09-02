@@ -48,7 +48,6 @@ export async function getAddressesFromFid(fid: string): Promise<string[]> {
       throw new Error(`GraphQL errors: ${JSON.stringify(data.errors)}`);
     }
 
-    // Assuming the structure of the response, extract and return the addresses
     return data.data.Socials.Social[0]?.userAssociatedAddresses || [];
   } catch (error) {
     console.error("Error fetching addresses:", error);

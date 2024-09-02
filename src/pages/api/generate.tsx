@@ -10,18 +10,10 @@ export default async function handler(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const src = searchParams.get('src');
   const title = searchParams.get('title');
-  const outcome = searchParams.get('outcome') === '1';
   const pct = searchParams.get('pct');
   const isGain = parseFloat(pct ?? '0.1') > 0 
   const emoji = isGain ? getRandomPositiveEmoji() : getRandomNegativeEmoji();
   const strPct = !!pct && pct.length > 0 ? pct + "%" : ""
-
-  if (!src) {
-    return new ImageResponse(<>invalid img</>, {
-      width: 1200,
-      height: 630,
-    });
-  }
 
   return new ImageResponse(
     (
@@ -80,7 +72,7 @@ export default async function handler(request: NextRequest) {
               {/* Image placeholder */}
               <div style={{ width: '30%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '8px', marginRight: '4px'}}>
                 <img
-                  src={src}
+                  src={src ?? ''}
                   style={{
                     padding: '36px',
                     objectFit: 'contain',
@@ -98,7 +90,7 @@ export default async function handler(request: NextRequest) {
                 {/* Yes/No section */}
                 <div style={{ width: '30%', display: 'flex', flexDirection: 'column' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    {outcome ? (
+                    {/* {outcome ? (
                       <div style={{ backgroundColor: '#f0fff0', borderRadius: '5px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '12px 18px' }}>
                         <span style={{ color: 'green', fontSize: '38px' }}>Yes</span>
                       </div>
@@ -106,7 +98,7 @@ export default async function handler(request: NextRequest) {
                       <div style={{ backgroundColor: '#fff0f0', borderRadius: '5px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '12px 18px' }}>
                         <span style={{ color: 'red', fontSize: '38px' }}>No</span>
                       </div>
-                    )}
+                    )} */}
                   </div>
                 </div>
               </div>

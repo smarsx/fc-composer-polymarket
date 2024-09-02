@@ -1,5 +1,7 @@
 import { GAMMA_BASE_URL } from "./constants";
 
+// https://gamma-api.polymarket.com/markets
+// https://docs.polymarket.com/?python#example-queries
 export async function fetchQuestionsByConditions(
   conditionIds: string[]
 ): Promise<Record<string, { question: string; src: string }>> {
