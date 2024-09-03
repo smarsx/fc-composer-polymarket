@@ -52,12 +52,14 @@ export async function getPositionsByProxy(
 
   const { rows } = await sql.query(query, proxyAddresses);
 
-  return rows.map((row: QueryResultRow) => ({
-    proxy: row.proxy,
-    conditionId: row.condition_id,
-    valueBought: parseInt(row.value_bought),
-    profits: parseInt(row.profit),
-    title: row.title,
-    src: row.src,
-  }));
+  return rows
+    .map((row: QueryResultRow) => ({
+      proxy: row.proxy,
+      conditionId: row.condition_id,
+      valueBought: parseInt(row.value_bought),
+      profits: parseInt(row.profit),
+      title: row.title,
+      src: row.src,
+    }))
+    .sort((a, b) => b.profits - a.profits);
 }

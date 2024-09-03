@@ -104,7 +104,7 @@ export default async function handler(request: NextRequest) {
               </div>
             </div>
             {/* Bottom section */}
-            <div style={{ display: 'flex', height: '30%',  justifyContent: 'flex-end', gap: '0px' }}>
+            <div style={{ display: 'flex', height: '30%',  justifyContent: 'flex-end', gap: '4px' }}>
               {/* Percent section */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {isGain ? (
