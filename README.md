@@ -3,10 +3,10 @@
 - % calculations are missing something. sometimes correct, sometimes not.
 
 #### Post Endpoint
-https://fc-composer-polymarket.vercel.app/compose
+https://fc-composer-polymarket.vercel.app/api/compose
 
 #### Composer Action Playground
-https://warpcast.com/~/developers/composer-actions?name=pmflex&postUrl=https%3A%2F%2Ffc-composer-polymarket.vercel.app%2Fcompose
+https://warpcast.com/~/developers/composer-actions?name=pmflex&postUrl=https%3A%2F%2Ffc-composer-polymarket.vercel.app%2Fapi%2Fcompose
 
 #### Example
 
