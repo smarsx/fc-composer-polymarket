@@ -46,20 +46,29 @@ export async function insertPositions(positions: Position[]) {
 export async function getPositionsByProxy(
   proxyAddresses: string[]
 ): Promise<Position[]> {
+  if (!proxyAddresses || proxyAddresses.length === 0) {
+    return [];
+  }
   proxyAddresses = proxyAddresses.map((a) => a.toLowerCase());
-  const placeholders = proxyAddresses.map((_, i) => `$${i + 1}`).join(",");
-  const query = `SELECT * FROM positions WHERE proxy IN (${placeholders})`;
 
-  const { rows } = await sql.query(query, proxyAddresses);
+  try {
+    const placeholders = proxyAddresses.map((_, i) => `$${i + 1}`).join(",");
+    const query = `SELECT * FROM positions WHERE proxy IN (${placeholders})`;
 
-  return rows
-    .map((row: QueryResultRow) => ({
-      proxy: row.proxy,
-      conditionId: row.condition_id,
-      valueBought: parseInt(row.value_bought),
-      profits: parseInt(row.profit),
-      title: row.title,
-      src: row.src,
-    }))
-    .sort((a, b) => b.profits - a.profits);
+    const { rows } = await sql.query(query, proxyAddresses);
+
+    return rows
+      .map((row: QueryResultRow) => ({
+        proxy: row.proxy,
+        conditionId: row.condition_id,
+        valueBought: parseInt(row.value_bought),
+        profits: parseInt(row.profit),
+        title: row.title,
+        src: row.src,
+      }))
+      .sort((a, b) => b.profits - a.profits);
+  } catch (e) {
+    console.log(`Error getPositionsByProxy: ${e}`);
+    return [];
+  }
 }
